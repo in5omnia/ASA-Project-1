@@ -160,18 +160,7 @@ findMaxRemovableSquare(const vector<unsigned int> &figure, unsigned int size) {
 }
 
 
-/*int upperRightLine = size - 1;
-for (
-int i = upperRightLine - 1;
-i >= 0; i--) {    //find longest line
-if (figure[i] < figure[upperRightLine])
-break;
-upperRightLine = i;
-}
-return
-min(figure[upperRightLine], size
-- upperRightLine + 1);
-}*/
+
 
 
 // Only calculates the number of possibilities for a square of size 2+
@@ -180,15 +169,11 @@ calculateTilings(vector<unsigned int> figure, unordered_map<size_t, unsigned lon
 	unsigned int size = figure.size();
 
 
-	if (size <= 1) {    //FIXME perhaps include columns of 1
-		//printFigure(&figure, size);    //debug
-		//cout << "size:" << size << endl;	//debug
-		//printf("0/1 Figure - Tilings: %llu\n", 1);    //debug
+	if (size <= 1)    //FIXME perhaps include columns of 1
 		return 1;
-	}
 
-	// Check if the figure is already in the cache
 	size_t hash = vectorHash(figure);
+	// Check if the figure is already in the cache
 	auto it = cache->find(hash);
 	if (it != cache->end()) {
 		//printFigure(&figure, size);    //debug
@@ -217,7 +202,7 @@ calculateTilings(vector<unsigned int> figure, unordered_map<size_t, unsigned lon
 	}
 
 	// Add the figure to the cache
-	cache->insert({hash, tilings});
+	cache->insert({vectorHash(figure), tilings});
 	//printFigure(&figure, size);    //debug
 	//cout << "size:" << size << endl; //debug
 	//printf("Max Square to remove: %d x %d\nTilings: %llu\n", maxRemovableSquare, maxRemovableSquare,

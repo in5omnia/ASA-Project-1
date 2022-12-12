@@ -15,7 +15,8 @@
 					"source" : ".",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -27,10 +28,11 @@
 					[
 						0
 					],
-					"name" : "ProjetoASA_1",
+					"name" : "ProjetoASA_15mooshak",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -42,6 +44,13 @@
 					"jsonFile" : "target-ProjetoASA_1-Debug-fe3ce5de4497e9b077e5.json",
 					"name" : "ProjetoASA_1",
 					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ProjetoASA_15mooshak::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ProjetoASA_15mooshak-Debug-79cb1be04e884751b7d9.json",
+					"name" : "ProjetoASA_15mooshak",
+					"projectIndex" : 0
 				}
 			]
 		}
@@ -49,12 +58,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/beatrizgavilan/CLionProjects/ProjetoASA_1/cmake-build-debug",
-		"source" : "/Users/beatrizgavilan/CLionProjects/ProjetoASA_1"
+		"build" : "/Users/powee/CLionProjects/ProjetoASA_1/cmake-build-debug",
+		"source" : "/Users/powee/CLionProjects/ProjetoASA_1"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 3
+		"minor" : 4
 	}
 }

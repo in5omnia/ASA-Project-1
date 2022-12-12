@@ -1,3 +1,4 @@
-/Users/beatrizgavilan/CLionProjects/ProjetoASA_1/cmake-build-debug/CMakeFiles/ProjetoASA_1.dir
-/Users/beatrizgavilan/CLionProjects/ProjetoASA_1/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/beatrizgavilan/CLionProjects/ProjetoASA_1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/powee/CLionProjects/ProjetoASA_1/cmake-build-debug/CMakeFiles/ProjetoASA_1.dir
+/Users/powee/CLionProjects/ProjetoASA_1/cmake-build-debug/CMakeFiles/ProjetoASA_15mooshak.dir
+/Users/powee/CLionProjects/ProjetoASA_1/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/powee/CLionProjects/ProjetoASA_1/cmake-build-debug/CMakeFiles/rebuild_cache.dir

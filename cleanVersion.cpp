@@ -13,31 +13,24 @@
 
 using namespace std;
 
+// Function that hashes a vector through the use of a string
 size_t vectorHash(const vector<unsigned short int> &vec) {
-	size_t seed = vec.size();
-	/*for (auto x: vec) {
-		x = ((x >> 16) ^ x) * 0x45d9f3b;
-		x = ((x >> 16) ^ x) * 0x45d9f3b;
-		x = (x >> 16) ^ x;
-		seed ^= x + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-	}*/
+	//Concatenate the vector into a string
+	string s;
 	for (auto x: vec) {
-		x = ((x * 0xcc9e2d51) << 15);
-		x = ((x * 0x1b873593) << 15);
-		seed = ((seed ^ x) << 13) * (0x5) + 0xe6546b64;
-		//seed = seed ^ size;
+		s += to_string(x);
 	}
-	return seed;
+	return hash<string>{}(s);
 }
 
-
-struct vectorHasher {
+// Don't Hash the Key (It's already a hash)
+struct keyHash {
 	size_t operator()(size_t const &hash) const {
 		return hash;
 	}
 };
 
-
+// Reads the input
 vector<unsigned short int> readInput() {
 	unsigned short int n_rows, m_cols, col;
 
@@ -62,8 +55,7 @@ removeSquares(const vector<unsigned short int> &figure, unsigned short int squar
 			  unsigned short int size) {
 
 	if (square_index == 0 && figure[0] == square_side) {
-		// if it's the first "square" and it's going to be empty
-		// it shouldn't show up, it's possible that there are empty squares in the following lines
+		// First Lines equals 0? if so remove any empty squares at the start
 		unsigned short size_of_new_figure = size - square_side;
 		vector<unsigned short int> newFigure(size_of_new_figure);
 		int non_empty_cols = 0;
@@ -78,7 +70,8 @@ removeSquares(const vector<unsigned short int> &figure, unsigned short int squar
 		return newFigure;
 	}
 
-	if (square_index + square_side == size && figure[size - 1] == square_side) { // last square
+	if (square_index + square_side == size && figure[size - 1] == square_side) {
+		// Last line equals 0? if so remove any empty squares at the end
 		vector<unsigned short int> newFigure(square_index);
 
 		int non_empty_cols = 0;
@@ -92,6 +85,7 @@ removeSquares(const vector<unsigned short int> &figure, unsigned short int squar
 		newFigure.resize(non_empty_cols);
 		return newFigure;
 	}
+
 	// normal case
 	vector<unsigned short int> newFigure(size);
 	unsigned short int i;
@@ -108,83 +102,62 @@ removeSquares(const vector<unsigned short int> &figure, unsigned short int squar
 	return newFigure;
 }
 
-
-unsigned short int *
+// Returns the pair of the locally optimal square to remove
+pair<unsigned short, unsigned short>
 findMaxRemovableSquare(const vector<unsigned short int> &figure, unsigned short int size) {
 
 	unsigned short int max_index = 0;
 	unsigned short int max_height = 0;
 	unsigned short int max_length = 0;
 	unsigned short int prev = 0;
-	bool contig = false;
 
 	for (unsigned short int i = 0; i < size; i++) {
 
-		unsigned short int current = figure.at(i);
+		unsigned short int current = figure[i];
 
-		if (current < prev) {
-			unsigned short int *output;
-			output = static_cast<unsigned short *> (malloc(sizeof(unsigned short int) * 3));
-			output[0] = max_height;
-			output[1] = max_index;
-			output[3] = max_length;
+		// Local Maximum
+		if (current < prev)
+			return {max_height, max_index};
 
-			return output;
-		}
-
-		if (contig && current != prev)
-			contig = false;
 
 		if (current > max_length) {
 			max_index = i;
 			max_height = 1;
 			max_length = current;
-			contig = true;
-
-		} else if (contig && max_height < current) {
+		} else if (max_height < current) {
 			// compares the height of the new possible square to the length of the current line
 			max_height++;
 		}
 		prev = current;
 	}
 
-	unsigned short int *output;
-	output = static_cast<unsigned short *> (malloc(sizeof(unsigned short int) * 3));
-	output[0] = max_height;
-	output[1] = max_index;
-	output[3] = max_length;
 
-	return output;
+	return {max_height, max_index};
 }
-
 
 
 // Calculates the number of possibilities for a figure to be filled with squares
 unsigned long long
-calculateTilings(vector<unsigned short int> figure, unordered_map<size_t, unsigned long long, vectorHasher> *cache) {
+calculateTilings(vector<unsigned short int> figure, unordered_map<size_t, unsigned long long, keyHash> *cache) {
 	unsigned short int size = figure.size();
 
-
-	if (size <= 1) {
+	// If there's only one line, there's only one way to fill it
+	if (size <= 1)
 		return 1;
-	}
 
-	// Check if the figure is already in the cache
-	auto it = cache->find(vectorHash(figure));
+	// Check if the figure is cached
+	size_t hash = vectorHash(figure);
+	auto it = cache->find(hash);
 	if (it != cache->end()) {
 		return it->second;
 	}
 
+
 	unsigned long long tilings = 0;
 	// Calculate the biggest square that can be removed
-	unsigned short int *maxArray = findMaxRemovableSquare(figure, size);
-	unsigned short int maxRemovableSquare = maxArray[0];
-	unsigned short int maxSquareIndex = maxArray[1];
-	unsigned short int maxSquareLength = maxArray[2];
-	free(maxArray);
-
-	if (maxSquareLength == 1)
-		return 1;
+	pair<unsigned short int, unsigned short int> maxPair = findMaxRemovableSquare(figure, size);
+	unsigned short int maxRemovableSquare = maxPair.first;
+	unsigned short int maxSquareIndex = maxPair.second;
 
 
 	for (unsigned short int i = 1; i <= maxRemovableSquare; i++) {
@@ -193,8 +166,10 @@ calculateTilings(vector<unsigned short int> figure, unordered_map<size_t, unsign
 		tilings += calculateTilings(newFigure, cache);
 	}
 
-	// Add the figure to the cache
-	cache->insert({vectorHash(figure), tilings});
+
+	// Add figure to the cache
+	cache->insert({hash, tilings});
+
 	return tilings;
 
 }
@@ -208,7 +183,7 @@ int main() {
 		cout << 0 << endl;
 	else {
 		// Creates map to store the results of the calculations
-		static auto cache = new unordered_map<size_t, unsigned long long, vectorHasher>();
+		static auto cache = new unordered_map<size_t, unsigned long long, keyHash>();
 
 		cout << calculateTilings(figure, cache) << endl;
 	}
